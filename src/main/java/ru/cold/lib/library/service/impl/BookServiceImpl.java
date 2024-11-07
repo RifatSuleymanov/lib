@@ -1,11 +1,7 @@
-/**
- * ----------------------------------------------
- * /* Author: Rifat Suleymanov
- * /* Date: 2024-11-06 11:02
- * ----------------------------------------------
- */
 package ru.cold.lib.library.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.cold.lib.library.dto.BookCopyDTO;
@@ -23,6 +19,8 @@ import java.util.Optional;
 @Service
 public class BookServiceImpl implements BookService {
 
+    private static final Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);  // Логгер для сервиса
+
     private final BookRepository bookRepository;
     private final BookCopyRepository bookCopyRepository;
     @Autowired
@@ -36,62 +34,87 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDTO getBookById(Long id) {
+        logger.info("Запрос на получение книги с ID: {}", id);
         Optional<Book> book = bookRepository.findById(id);
-        return book.map(bookMapper::toDTO).orElse(null);
+        if (book.isPresent()) {
+            logger.info("Книга найдена с ID: {}", id);
+            return bookMapper.toDTO(book.get());
+        } else {
+            logger.warn("Книга с ID {} не найдена", id);
+            return null;
+        }
     }
 
     @Override
     public List<BookDTO> getAllBooks() {
+        logger.info("Запрос на получение всех книг");
         List<Book> books = bookRepository.findAll();
+        logger.info("Количество найденных книг: {}", books.size());
         return bookMapper.toDTOList(books);
     }
 
     @Override
     public BookDTO addBook(BookDTO bookDTO) {
+        logger.info("Запрос на добавление новой книги: {}", bookDTO);
         Book book = bookMapper.toEntity(bookDTO);
         Book savedBook = bookRepository.save(book);
+        logger.info("Книга успешно добавлена с ID: {}", savedBook.getId());
         return bookMapper.toDTO(savedBook);
     }
 
-
     @Override
     public List<BookCopyDTO> getBookCopies(Long bookId) {
+        logger.info("Запрос на получение копий книги с ID: {}", bookId);
         List<BookCopy> copies = bookCopyRepository.findByBookId(bookId);
+        logger.info("Найдено копий книги с ID {}: {}", bookId, copies.size());
         return bookMapper.toBookCopyDTOList(copies);
     }
 
     @Override
     public List<BookCopyDTO> getBookAvailableBookCopies(Long bookId) {
+        logger.info("Запрос на получение доступных копий книги с ID: {}", bookId);
         List<BookCopy> availableCopies = bookCopyRepository.findByBookIdAndIsAvailable(bookId, true);
+        logger.info("Найдено доступных копий книги с ID {}: {}", bookId, availableCopies.size());
         return bookMapper.toBookCopyDTOList(availableCopies);
     }
 
     @Override
     public boolean isBookAvailable(Long bookId) {
+        logger.info("Запрос на проверку доступности книги с ID: {}", bookId);
         List<BookCopy> availableCopies = bookCopyRepository.findByBookIdAndIsAvailable(bookId, true);
-        return !availableCopies.isEmpty();
+        boolean isAvailable = !availableCopies.isEmpty();
+        logger.info("Книга с ID {} доступна: {}", bookId, isAvailable);
+        return isAvailable;
     }
+
     @Override
     public Optional<BookDTO> findByInventoryNumber(String inventoryNumber) {
+        logger.info("Запрос на получение книги по инвентаризационному номеру: {}", inventoryNumber);
         return bookRepository.findByInventoryNumber(inventoryNumber)
                 .map(bookMapper::toDTO);
     }
 
     @Override
     public List<BookDTO> findByTitle(String title) {
+        logger.info("Запрос на получение книг с названием: {}", title);
         List<Book> books = bookRepository.findByTitle(title);
+        logger.info("Найдено книг с названием '{}': {}", title, books.size());
         return bookMapper.toDTOList(books);
     }
 
     @Override
     public List<BookDTO> findByYearOfPublication(Integer yearOfPublication) {
+        logger.info("Запрос на получение книг по году публикации: {}", yearOfPublication);
         List<Book> books = bookRepository.findByYearOfPublication(yearOfPublication);
+        logger.info("Найдено книг с годом публикации {}: {}", yearOfPublication, books.size());
         return bookMapper.toDTOList(books);
     }
 
     @Override
     public List<BookDTO> findByAuthor(String author) {
+        logger.info("Запрос на получение книг по автору: {}", author);
         List<Book> books = bookRepository.findByAuthor(author);
+        logger.info("Найдено книг с автором '{}': {}", author, books.size());
         return bookMapper.toDTOList(books);
     }
 }
