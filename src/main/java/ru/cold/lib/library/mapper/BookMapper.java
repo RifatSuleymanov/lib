@@ -8,7 +8,6 @@ package ru.cold.lib.library.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 import ru.cold.lib.library.dto.BookCopyDTO;
 import ru.cold.lib.library.dto.BookDTO;
 import ru.cold.lib.library.model.Book;
