@@ -22,7 +22,7 @@ public class BookCopy {
 
     @ManyToOne
     @JoinColumn(name = "book_id")
-    private Book book; // связь с книгой
+    private Book book;
 
-    private boolean isAvailable; //true-доступен, false - занято
+    private boolean isAvailable;
 }
