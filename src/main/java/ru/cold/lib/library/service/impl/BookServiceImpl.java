@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.cold.lib.library.dto.BookCopyDTO;
 import ru.cold.lib.library.dto.BookDTO;
+import ru.cold.lib.library.exception.InventoryNumberAlreadyExistsException;
+import ru.cold.lib.library.exception.ResourceNotFoundException;
 import ru.cold.lib.library.mapper.BookMapper;
 import ru.cold.lib.library.model.Book;
 import ru.cold.lib.library.model.BookCopy;
@@ -19,13 +21,13 @@ import java.util.Optional;
 @Service
 public class BookServiceImpl implements BookService {
 
-    private static final Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);  // Логгер для сервиса
+    private static final Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
 
     private final BookRepository bookRepository;
     private final BookCopyRepository bookCopyRepository;
-    @Autowired
     private final BookMapper bookMapper;
 
+    @Autowired
     public BookServiceImpl(BookRepository bookRepository, BookCopyRepository bookCopyRepository, BookMapper bookMapper) {
         this.bookRepository = bookRepository;
         this.bookCopyRepository = bookCopyRepository;
@@ -41,7 +43,7 @@ public class BookServiceImpl implements BookService {
             return bookMapper.toDTO(book.get());
         } else {
             logger.warn("Книга с ID {} не найдена", id);
-            return null;
+            throw new ResourceNotFoundException("Книга с ID " + id + " не найдена");
         }
     }
 
@@ -56,6 +58,15 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDTO addBook(BookDTO bookDTO) {
         logger.info("Запрос на добавление новой книги: {}", bookDTO);
+
+        // Проверяем, существует ли книга с таким инвентаризационным номером
+        Optional<Book> existingBook = bookRepository.findByInventoryNumber(bookDTO.getInventoryNumber());
+        if (existingBook.isPresent()) {
+            logger.warn("Книга с инвентаризационным номером {} уже существует", bookDTO.getInventoryNumber());
+            throw new InventoryNumberAlreadyExistsException("Книга с инвентаризационным номером " + bookDTO.getInventoryNumber() + " уже существует");
+        }
+
+        // Если книги нет, сохраняем новую
         Book book = bookMapper.toEntity(bookDTO);
         Book savedBook = bookRepository.save(book);
         logger.info("Книга успешно добавлена с ID: {}", savedBook.getId());
