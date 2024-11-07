@@ -30,5 +30,8 @@ public class Book {
     private Integer yearOfPublication;
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     private List<BookCopy> copies;
+    @Column(unique = true)
+    @NotBlank(message = "Инвентаризационный номер не должен быть пустым!")
+    private String inventoryNumber;
 
 }

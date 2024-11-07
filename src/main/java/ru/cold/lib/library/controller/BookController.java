@@ -17,6 +17,7 @@ import ru.cold.lib.library.dto.BookDTO;
 import ru.cold.lib.library.service.BookService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @Validated
@@ -35,8 +36,8 @@ public class BookController {
     }
 
     //Получить книгу по ID
-    @GetMapping("/id")
-    public BookDTO getBookById(@RequestParam Long id) {
+    @GetMapping("/{id}")
+    public BookDTO getBookById(@PathVariable Long id) {
         return bookService.getBookById(id);
     }
 
@@ -63,6 +64,31 @@ public class BookController {
     @GetMapping("/{id}/available")
     public boolean isBookAvailable(@PathVariable Long id) {
         return bookService.isBookAvailable(id);
+    }
+
+
+    // Получить книгу по инвентаризационному номеру
+    @GetMapping("/inventory/{inventoryNumber}")
+    public Optional<BookDTO> getBookByInventoryNumber(@PathVariable String inventoryNumber) {
+        return bookService.findByInventoryNumber(inventoryNumber);
+    }
+
+    // Получить книги по названию
+    @GetMapping("/title/{title}")
+    public List<BookDTO> getBooksByTitle(@PathVariable String title) {
+        return bookService.findByTitle(title);
+    }
+
+    // Получить книги по году публикации
+    @GetMapping("/year/{year}")
+    public List<BookDTO> getBooksByYear(@PathVariable Integer year) {
+        return bookService.findByYearOfPublication(year);
+    }
+
+    // Получить книги по автору
+    @GetMapping("/author/{author}")
+    public List<BookDTO> getBooksByAuthor(@PathVariable String author) {
+        return bookService.findByAuthor(author);
     }
 
 }

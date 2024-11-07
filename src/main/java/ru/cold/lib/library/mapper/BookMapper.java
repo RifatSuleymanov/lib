@@ -19,7 +19,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface BookMapper {
 
-    // Настройка маппинга с указанием полей
+    // Настройка маппинга, необязательно, если поля совпадают
     @Mapping(target = "title", source = "title")
     @Mapping(target = "author", source = "author")
     @Mapping(target = "yearOfPublication", source = "yearOfPublication")
@@ -32,4 +32,5 @@ public interface BookMapper {
     List<BookCopyDTO> toBookCopyDTOList(List<BookCopy> bookCopies);
     BookCopy toEntity(BookCopyDTO bookCopyDTO);
 }
+
 

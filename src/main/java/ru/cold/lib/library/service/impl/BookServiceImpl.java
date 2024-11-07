@@ -71,4 +71,27 @@ public class BookServiceImpl implements BookService {
         List<BookCopy> availableCopies = bookCopyRepository.findByBookIdAndIsAvailable(bookId, true);
         return !availableCopies.isEmpty();
     }
+    @Override
+    public Optional<BookDTO> findByInventoryNumber(String inventoryNumber) {
+        return bookRepository.findByInventoryNumber(inventoryNumber)
+                .map(bookMapper::toDTO);
+    }
+
+    @Override
+    public List<BookDTO> findByTitle(String title) {
+        List<Book> books = bookRepository.findByTitle(title);
+        return bookMapper.toDTOList(books);
+    }
+
+    @Override
+    public List<BookDTO> findByYearOfPublication(Integer yearOfPublication) {
+        List<Book> books = bookRepository.findByYearOfPublication(yearOfPublication);
+        return bookMapper.toDTOList(books);
+    }
+
+    @Override
+    public List<BookDTO> findByAuthor(String author) {
+        List<Book> books = bookRepository.findByAuthor(author);
+        return bookMapper.toDTOList(books);
+    }
 }

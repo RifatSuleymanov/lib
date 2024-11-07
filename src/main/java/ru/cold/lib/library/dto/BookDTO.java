@@ -21,4 +21,6 @@ public class BookDTO {
     private String author;
     private Integer yearOfPublication;
     private List<BookCopyDTO> copies;
+    private String inventoryNumber;
+
 }

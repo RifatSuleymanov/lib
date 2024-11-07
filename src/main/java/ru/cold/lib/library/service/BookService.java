@@ -5,6 +5,7 @@ import ru.cold.lib.library.dto.BookCopyDTO;
 import ru.cold.lib.library.dto.BookDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public interface BookService {
@@ -14,4 +15,8 @@ public interface BookService {
     List<BookCopyDTO> getBookCopies(Long bookId);
     List<BookCopyDTO> getBookAvailableBookCopies(Long id);
     boolean isBookAvailable(Long bookId);
+    Optional<BookDTO> findByInventoryNumber(String inventoryNumber);
+    List<BookDTO> findByTitle(String title);
+    List<BookDTO> findByYearOfPublication(Integer yearOfPublication);
+    List<BookDTO> findByAuthor(String author);
 }
